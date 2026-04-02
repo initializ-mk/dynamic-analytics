@@ -1,6 +1,6 @@
 # Go binaries
-seed
-server
+/seed
+/server
 
 # Vite build output
 frontend/dist/
