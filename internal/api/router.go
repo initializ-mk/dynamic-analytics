@@ -2,6 +2,8 @@ package api
 
 import (
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -17,8 +19,14 @@ func NewRouter(db *mongo.Database, llmClient *llm.Client) http.Handler {
 	r := chi.NewRouter()
 
 	// Middleware
+	allowedOrigins := []string{"http://localhost:3000", "http://localhost:5173"}
+	if extra := os.Getenv("CORS_ORIGINS"); extra != "" {
+		for _, o := range strings.Split(extra, ",") {
+			allowedOrigins = append(allowedOrigins, strings.TrimSpace(o))
+		}
+	}
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:5173"},
+		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type"},
 		AllowCredentials: false,
